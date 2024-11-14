@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { loanAPI } from '@/services/api/loans'
+import { loanAPI } from '@/services/api'
 import { QueryLoanRequestsFiltersInput } from '@/services/generated/graphql'
 
 export function useLoanList(

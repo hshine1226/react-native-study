@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { loanAPI } from '@/services/api/loans'
+import { loanAPI } from '@/services/api'
 
 export function useLoanDetail(serialNumber: string) {
     return useQuery({

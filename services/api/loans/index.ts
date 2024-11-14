@@ -2,8 +2,8 @@ import { QUERY_LOAN_REQUEST, QUERY_LOAN_REQUESTS } from './queries'
 import {
     QueryLoanRequestsFiltersInput,
     QueryLoanRequestsReturn
-} from '../generated/graphql'
-import { apolloClient } from './apollo'
+} from '../../generated/graphql'
+import { apolloClient } from '../config/apolloClient'
 
 export const loanAPI = {
     getLoans: async (filters: QueryLoanRequestsFiltersInput) => {
