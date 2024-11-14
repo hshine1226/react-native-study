@@ -5,6 +5,7 @@ import { formatAmount, formatDate } from '@/utils/format'
 
 interface LoanRequest {
     id: string
+    serialNumber: string
     applicantName: string | null
     applicationDate: string | null
     amount: number | null
@@ -131,9 +132,9 @@ export function LoanCard({ loan }: LoanCardProps) {
             style={tw`p-4 bg-white mb-4 rounded-xl shadow-sm`}
             onPress={() =>
                 router.push({
-                    pathname: '/loans/[id]',
+                    pathname: '/loans/[serialNumber]',
                     params: {
-                        id: loan.id
+                        serialNumber: loan.serialNumber
                     }
                 })
             }

@@ -2297,7 +2297,15 @@ export type QueryLoanRequestsQueryVariables = Exact<{
 }>;
 
 
-export type QueryLoanRequestsQuery = { __typename?: 'Query', queryLoanRequests: { __typename?: 'QueryLoanRequestsReturn', data: Array<{ __typename?: 'LoanRequest', id: string, serialNumber?: string | null, loanAmount?: number | null, loanPurpose?: string | null, createdAt: string, updatedAt: string, requester?: { __typename?: 'Requester', name?: string | null, phoneNumber?: string | null } | null, loanState?: { __typename?: 'LoanState', stateId: number, category: string, event: string, description: string } | null }>, meta: { __typename?: 'QueryLoanRequestsMeta', totalCount: number, totalPages: number, itemPerPage: number, currentPage: number, itemCount: number } } };
+export type QueryLoanRequestsQuery = { __typename?: 'Query', queryLoanRequests: { __typename?: 'QueryLoanRequestsReturn', data: Array<{ __typename?: 'LoanRequest', id: string, serialNumber?: string | null, debtorName?: string | null, debtorCorpName?: string | null, loanAmount?: number | null, loanPurpose?: string | null, createdAt: string, updatedAt: string, requester?: { __typename?: 'Requester', name?: string | null, phoneNumber?: string | null } | null, loanState?: { __typename?: 'LoanState', stateId: number, category: string, event: string, description: string } | null }>, meta: { __typename?: 'QueryLoanRequestsMeta', totalCount: number, totalPages: number, itemPerPage: number, currentPage: number, itemCount: number } } };
+
+export type QueryLoanRequestQueryVariables = Exact<{
+  serialNumber: Scalars['String']['input'];
+  isInitialRequest?: InputMaybe<Scalars['Boolean']['input']>;
+}>;
+
+
+export type QueryLoanRequestQuery = { __typename?: 'Query', queryLoanRequest: { __typename?: 'LoanRequest', id: string, serialNumber?: string | null, createdAt: string, updatedAt: string, submissionUpdatedAt?: string | null, loanRequestExpireDate?: string | null, loanProposalExpireDate?: string | null, loanPurpose?: string | null, loanAmount?: number | null, loanExecDate?: string | null, debtorCorpFlag?: boolean | null, debtorName?: string | null, debtorCorpName?: string | null, debtorCorpRepName?: string | null, debtorCorpId?: string | null, debtorCorpCreateDate?: string | null, debtorOccupation?: string | null, debtorIncome?: number | null, debtorHealthInsur?: number | null, debtorCreditRating?: number | null, assetPnu?: string | null, assetHoPk?: string | null, assetOwnerMultiFlag?: boolean | null, assetOwnerCorpFlag?: boolean | null, assetOwnerName?: string | null, assetOwnerCorpName?: string | null, assetOwnerCorpDirectInputFlag?: boolean | null, assetOwnerCorpId?: string | null, assetContractDate?: string | null, assetBalanceDueDate?: string | null, ltvPriorLoanSum?: number | null, ltvPriorBondSum?: number | null, requesterComment?: string | null, referralCode?: string | null, requester?: { __typename?: 'Requester', name?: string | null, phoneNumber?: string | null } | null, loanState?: { __typename?: 'LoanState', stateId: number, category: string, event: string, description: string } | null } };
 
 
 export const QueryLoanRequestsDocument = gql`
@@ -2310,6 +2318,8 @@ export const QueryLoanRequestsDocument = gql`
         name
         phoneNumber
       }
+      debtorName
+      debtorCorpName
       loanAmount
       loanPurpose
       createdAt
@@ -2364,3 +2374,90 @@ export type QueryLoanRequestsQueryHookResult = ReturnType<typeof useQueryLoanReq
 export type QueryLoanRequestsLazyQueryHookResult = ReturnType<typeof useQueryLoanRequestsLazyQuery>;
 export type QueryLoanRequestsSuspenseQueryHookResult = ReturnType<typeof useQueryLoanRequestsSuspenseQuery>;
 export type QueryLoanRequestsQueryResult = Apollo.QueryResult<QueryLoanRequestsQuery, QueryLoanRequestsQueryVariables>;
+export const QueryLoanRequestDocument = gql`
+    query QueryLoanRequest($serialNumber: String!, $isInitialRequest: Boolean) {
+  queryLoanRequest(
+    serialNumber: $serialNumber
+    isInitialRequest: $isInitialRequest
+  ) {
+    id
+    serialNumber
+    createdAt
+    updatedAt
+    submissionUpdatedAt
+    loanRequestExpireDate
+    loanProposalExpireDate
+    loanPurpose
+    loanAmount
+    loanExecDate
+    debtorCorpFlag
+    debtorName
+    debtorCorpName
+    debtorCorpRepName
+    debtorCorpId
+    debtorCorpCreateDate
+    debtorOccupation
+    debtorIncome
+    debtorHealthInsur
+    debtorCreditRating
+    assetPnu
+    assetHoPk
+    assetOwnerMultiFlag
+    assetOwnerCorpFlag
+    assetOwnerName
+    assetOwnerCorpName
+    assetOwnerCorpDirectInputFlag
+    assetOwnerCorpId
+    assetContractDate
+    assetBalanceDueDate
+    ltvPriorLoanSum
+    ltvPriorBondSum
+    requester {
+      name
+      phoneNumber
+    }
+    loanState {
+      stateId
+      category
+      event
+      description
+    }
+    requesterComment
+    referralCode
+  }
+}
+    `;
+
+/**
+ * __useQueryLoanRequestQuery__
+ *
+ * To run a query within a React component, call `useQueryLoanRequestQuery` and pass it any options that fit your needs.
+ * When your component renders, `useQueryLoanRequestQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useQueryLoanRequestQuery({
+ *   variables: {
+ *      serialNumber: // value for 'serialNumber'
+ *      isInitialRequest: // value for 'isInitialRequest'
+ *   },
+ * });
+ */
+export function useQueryLoanRequestQuery(baseOptions: Apollo.QueryHookOptions<QueryLoanRequestQuery, QueryLoanRequestQueryVariables> & ({ variables: QueryLoanRequestQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<QueryLoanRequestQuery, QueryLoanRequestQueryVariables>(QueryLoanRequestDocument, options);
+      }
+export function useQueryLoanRequestLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<QueryLoanRequestQuery, QueryLoanRequestQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<QueryLoanRequestQuery, QueryLoanRequestQueryVariables>(QueryLoanRequestDocument, options);
+        }
+export function useQueryLoanRequestSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<QueryLoanRequestQuery, QueryLoanRequestQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<QueryLoanRequestQuery, QueryLoanRequestQueryVariables>(QueryLoanRequestDocument, options);
+        }
+export type QueryLoanRequestQueryHookResult = ReturnType<typeof useQueryLoanRequestQuery>;
+export type QueryLoanRequestLazyQueryHookResult = ReturnType<typeof useQueryLoanRequestLazyQuery>;
+export type QueryLoanRequestSuspenseQueryHookResult = ReturnType<typeof useQueryLoanRequestSuspenseQuery>;
+export type QueryLoanRequestQueryResult = Apollo.QueryResult<QueryLoanRequestQuery, QueryLoanRequestQueryVariables>;
