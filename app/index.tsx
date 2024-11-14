@@ -1,35 +1,35 @@
-import { View, FlatList } from 'react-native'
-import { useState } from 'react'
+import { View, Text, Image } from 'react-native'
+import { useEffect } from 'react'
+import { useRouter } from 'expo-router'
 import tw from '@/utils/tw'
-import { LoanCard } from '@/components/loans/LoanCard'
-import { mockLoans } from '@/utils/mockData'
-import { SearchBar } from '@/components/ui/SearchBar'
+import { LinearGradient } from 'expo-linear-gradient'
 
-export default function LoansScreen() {
-    const [searchQuery, setSearchQuery] = useState('')
+export default function SplashScreen() {
+    const router = useRouter()
 
-    const filteredLoans = mockLoans.filter(
-        loan =>
-            loan.applicantName.includes(searchQuery) ||
-            loan.purpose.includes(searchQuery)
-    )
+    useEffect(() => {
+        // 2초 후에 홈 화면으로 이동
+        const timer = setTimeout(() => {
+            router.replace('/(tabs)')
+        }, 2000)
+
+        return () => clearTimeout(timer)
+    }, [])
 
     return (
-        <View style={tw`flex-1 bg-gray-50`}>
-            <SearchBar
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                placeholder="이름 또는 용도로 검색"
-                style={tw`mx-4 my-2`}
-            />
-
-            <FlatList
-                data={filteredLoans}
-                renderItem={({ item }) => <LoanCard loan={item} />}
-                keyExtractor={item => item.id}
-                contentContainerStyle={tw`p-4`}
-                showsVerticalScrollIndicator={false}
-            />
-        </View>
+        <LinearGradient
+            colors={['#3B82F6', '#2563EB']} // blue-500 to blue-600
+            style={tw`flex-1 justify-center items-center`}
+        >
+            {/* 로고 이미지가 있다면 Image 컴포넌트로 교체 */}
+            <View style={tw`items-center`}>
+                <Text style={tw`text-4xl font-bold text-white mb-2`}>
+                    파이퍼 대시보드
+                </Text>
+                <Text style={tw`text-white text-lg`}>
+                    금융기관 파이퍼 대시보드
+                </Text>
+            </View>
+        </LinearGradient>
     )
 }
