@@ -10,6 +10,8 @@ export const QUERY_LOAN_REQUESTS = gql`
                     name
                     phoneNumber
                 }
+                debtorName
+                debtorCorpName
                 loanAmount
                 loanPurpose
                 createdAt

@@ -1,8 +1,10 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { loanAPI } from '@/services/api/loans'
-import { QueryLoanRequestsFilters } from '@/services/types/loans'
+import { QueryLoanRequestsFiltersInput } from '@/services/generated/graphql'
 
-export function useLoanList(filters: Partial<QueryLoanRequestsFilters> = {}) {
+export function useLoanList(
+    filters: Partial<QueryLoanRequestsFiltersInput> = {}
+) {
     return useInfiniteQuery({
         queryKey: ['loans', filters],
         initialPageParam: 1,

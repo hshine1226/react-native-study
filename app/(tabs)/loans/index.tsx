@@ -11,7 +11,9 @@ export default function LoansScreen() {
         requesterName: searchQuery || undefined
     })
 
+    console.log('🚀 ~ LoansScreen ~ data:', data)
     const loans = data?.pages.flatMap(page => page.data) ?? []
+    console.log('🚀 ~ LoansScreen ~ loans:', loans)
 
     if (isLoading) {
         return (
@@ -36,12 +38,12 @@ export default function LoansScreen() {
                     <LoanCard
                         loan={{
                             id: item.id,
-                            applicantName: item.requester.name,
+                            applicantName: item.debtorName || null,
                             applicationDate: item.createdAt,
-                            amount: item.loanAmount,
-                            status: item.loanState.loanRequestStateId,
-                            phoneNumber: item.requester.phoneNumber,
-                            purpose: item.loanPurpose
+                            amount: item.loanAmount || null,
+                            stateId: item.loanState?.stateId ?? 140,
+                            phoneNumber: item.requester?.phoneNumber || null,
+                            purpose: item.loanPurpose || null
                         }}
                     />
                 )}

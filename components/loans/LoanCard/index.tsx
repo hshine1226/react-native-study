@@ -1,8 +1,17 @@
 import { View, Text, Pressable } from 'react-native'
 import { useRouter } from 'expo-router'
 import tw from '@/utils/tw'
-import { LoanRequest } from '@/services/generated/graphql'
 import { formatAmount, formatDate } from '@/utils/format'
+
+interface LoanRequest {
+    id: string
+    applicantName: string | null
+    applicationDate: string | null
+    amount: number | null
+    stateId: number
+    phoneNumber: string | null
+    purpose: string | null
+}
 
 interface LoanCardProps {
     loan: LoanRequest
@@ -130,36 +139,30 @@ export function LoanCard({ loan }: LoanCardProps) {
             }
         >
             <View style={tw`flex-row justify-between items-center mb-2`}>
-                <Text style={tw`text-lg font-bold`}>{loan.debtorName}</Text>
+                <Text style={tw`text-lg font-bold`}>{loan.applicantName}</Text>
                 <View
                     style={tw`${
-                        statusColors[
-                            (loan.loanState?.stateId as ELoanStateId) ||
-                                ELoanStateId.LOAN_REQUEST_SCREENING
-                        ]
+                        statusColors[loan.stateId as ELoanStateId]
                     } px-2 py-1 rounded`}
                 >
                     <Text style={tw`text-sm`}>
-                        {statusText[
-                            (loan.loanState?.stateId as ELoanStateId) ??
-                                ELoanStateId.LOAN_REQUEST_SCREENING
-                        ] ?? '상태 없음'}
+                        {statusText[loan.stateId as ELoanStateId]}
                     </Text>
                 </View>
             </View>
 
             <View style={tw`space-y-1`}>
                 <Text style={tw`text-gray-600`}>
-                    신청금액:{' '}
-                    {loan.loanAmount ? formatAmount(loan.loanAmount) : '미정'}원
+                    신청금액: {loan.amount ? formatAmount(loan.amount) : '미정'}
+                    원
                 </Text>
                 <Text style={tw`text-gray-600`}>
                     신청일자:{' '}
-                    {loan.submissionUpdatedAt
-                        ? formatDate(loan.submissionUpdatedAt)
+                    {loan.applicationDate
+                        ? formatDate(loan.applicationDate)
                         : '미정'}
                 </Text>
-                <Text style={tw`text-gray-600`}>용도: {loan.loanPurpose}</Text>
+                <Text style={tw`text-gray-600`}>용도: {loan.purpose}</Text>
             </View>
         </Pressable>
     )
