@@ -4,7 +4,7 @@ const config: CodegenConfig = {
     schema: 'http://localhost:8000/graphql', // GraphQL 서버 엔드포인트
     documents: ['services/**/*.ts'], // GraphQL 쿼리가 있는 파일들
     generates: {
-        './generated/graphql.ts': {
+        './services/generated/graphql.ts': {
             plugins: [
                 'typescript',
                 'typescript-operations',

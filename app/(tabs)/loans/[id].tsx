@@ -98,7 +98,6 @@ function InfoRow({ label, value }: { label: string; value: string }) {
         </View>
     )
 }
-
 // 처리 현황 타임라인 컴포넌트
 function ProcessTimeline({
     status,

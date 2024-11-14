@@ -1,26 +1,120 @@
 import { View, Text, Pressable } from 'react-native'
 import { useRouter } from 'expo-router'
 import tw from '@/utils/tw'
-import { Loan } from '@/services/types/loans'
+import { LoanRequest } from '@/services/generated/graphql'
 import { formatAmount, formatDate } from '@/utils/format'
 
 interface LoanCardProps {
-    loan: Loan
+    loan: LoanRequest
+}
+
+export enum ELoanStateId {
+    /**
+     * 대출신청,임시저장
+     * */
+    'LOAN_REQUEST_TEMPORARY_SAVE' = 100,
+    /**
+     * 대출신청,스크리닝통과
+     */
+    'LOAN_REQUEST_APPLY' = 110,
+    /**
+     * 대출신청,제안없이종료
+     */
+    'LOAN_REQUEST_APPLY_REJECT' = 120,
+    /**
+     * 대출신청,스크리닝진행
+     */
+    'LOAN_REQUEST_SCREENING' = 140,
+    /**
+     * 대출신청,스크리닝반려
+     */
+    'LOAN_REQUEST_SCREENING_REJECT' = 150,
+    /**
+     * 대출신청,스크리닝재진행
+     */
+    'LOAN_REQUEST_SCREENING_RETRY' = 160,
+    /**
+     * 대출제안,제안
+     */
+    'LOAN_PROPOSAL_PROPOSE' = 210,
+    /**
+     * 대출제안,선택없이종결
+     */
+    'LOAN_PROPOSAL_NO_SELECTION_CLOSED' = 220,
+    /**
+     * 대출제안,선택함
+     */
+    'LOAN_PROPOSAL_PROPOSE_ACCEPT' = 230,
+    /**
+     * 대출제안,상담없이종결
+     */
+    'LOAN_PROPOSAL_NO_CONSULTATION_CLOSED' = 240,
+    /**
+     * 대출상담,상담중
+     */
+    'LOAN_CONSULTATION_CONSULTING' = 310,
+    /**
+     * 대출상담,계약없이종결
+     */
+    'LOAN_CONSULTATION_NO_CONTRACT_CLOSED' = 320,
+    /**
+     * 대출계약,계약체결
+     */
+    'LOAN_CONTRACT_CONTRACT' = 400,
+    /**
+     * 대출계약,실행없이종결
+     */
+    'LOAN_CONTRACT_NO_EXECUTION_CLOSED' = 410,
+    /**
+     * 대출계약,실행완료
+     */
+    'LOAN_CONTRACT_FINISH' = 500
 }
 
 export function LoanCard({ loan }: LoanCardProps) {
     const router = useRouter()
 
     const statusColors = {
-        PENDING: 'bg-yellow-100 text-yellow-800',
-        APPROVED: 'bg-green-100 text-green-800',
-        REJECTED: 'bg-red-100 text-red-800'
+        [ELoanStateId.LOAN_REQUEST_SCREENING]: 'bg-yellow-100 text-yellow-800',
+        [ELoanStateId.LOAN_REQUEST_APPLY]: 'bg-green-100 text-green-800',
+        [ELoanStateId.LOAN_REQUEST_SCREENING_REJECT]: 'bg-red-100 text-red-800',
+        [ELoanStateId.LOAN_REQUEST_TEMPORARY_SAVE]: 'bg-gray-100 text-gray-800',
+        [ELoanStateId.LOAN_REQUEST_APPLY_REJECT]: 'bg-red-100 text-red-800',
+        [ELoanStateId.LOAN_REQUEST_SCREENING_RETRY]:
+            'bg-yellow-100 text-yellow-800',
+        [ELoanStateId.LOAN_PROPOSAL_PROPOSE]: 'bg-blue-100 text-blue-800',
+        [ELoanStateId.LOAN_PROPOSAL_PROPOSE_ACCEPT]:
+            'bg-blue-100 text-blue-800',
+        [ELoanStateId.LOAN_PROPOSAL_NO_SELECTION_CLOSED]:
+            'bg-gray-100 text-gray-800',
+        [ELoanStateId.LOAN_PROPOSAL_NO_CONSULTATION_CLOSED]:
+            'bg-gray-100 text-gray-800',
+        [ELoanStateId.LOAN_CONSULTATION_CONSULTING]:
+            'bg-yellow-100 text-yellow-800',
+        [ELoanStateId.LOAN_CONSULTATION_NO_CONTRACT_CLOSED]:
+            'bg-red-100 text-red-800',
+        [ELoanStateId.LOAN_CONTRACT_CONTRACT]: 'bg-green-100 text-green-800',
+        [ELoanStateId.LOAN_CONTRACT_NO_EXECUTION_CLOSED]:
+            'bg-red-100 text-red-800',
+        [ELoanStateId.LOAN_CONTRACT_FINISH]: 'bg-green-100 text-green-800'
     }
 
     const statusText = {
-        PENDING: '심사중',
-        APPROVED: '승인',
-        REJECTED: '거절'
+        [ELoanStateId.LOAN_REQUEST_SCREENING]: '심사중',
+        [ELoanStateId.LOAN_REQUEST_APPLY]: '승인',
+        [ELoanStateId.LOAN_REQUEST_SCREENING_REJECT]: '거절',
+        [ELoanStateId.LOAN_REQUEST_TEMPORARY_SAVE]: '임시저장',
+        [ELoanStateId.LOAN_REQUEST_APPLY_REJECT]: '거절',
+        [ELoanStateId.LOAN_REQUEST_SCREENING_RETRY]: '재진행',
+        [ELoanStateId.LOAN_PROPOSAL_PROPOSE]: '제안',
+        [ELoanStateId.LOAN_PROPOSAL_PROPOSE_ACCEPT]: '선택함',
+        [ELoanStateId.LOAN_PROPOSAL_NO_SELECTION_CLOSED]: '선택없이종결',
+        [ELoanStateId.LOAN_CONSULTATION_CONSULTING]: '상담중',
+        [ELoanStateId.LOAN_CONSULTATION_NO_CONTRACT_CLOSED]: '계약없이종결',
+        [ELoanStateId.LOAN_CONTRACT_CONTRACT]: '계약체결',
+        [ELoanStateId.LOAN_CONTRACT_NO_EXECUTION_CLOSED]: '실행없이종결',
+        [ELoanStateId.LOAN_PROPOSAL_NO_CONSULTATION_CLOSED]: '상담없이종결',
+        [ELoanStateId.LOAN_CONTRACT_FINISH]: '실행완료'
     }
 
     return (
@@ -36,22 +130,36 @@ export function LoanCard({ loan }: LoanCardProps) {
             }
         >
             <View style={tw`flex-row justify-between items-center mb-2`}>
-                <Text style={tw`text-lg font-bold`}>{loan.applicantName}</Text>
+                <Text style={tw`text-lg font-bold`}>{loan.debtorName}</Text>
                 <View
-                    style={tw`${statusColors[loan.status]} px-2 py-1 rounded`}
+                    style={tw`${
+                        statusColors[
+                            (loan.loanState?.stateId as ELoanStateId) ||
+                                ELoanStateId.LOAN_REQUEST_SCREENING
+                        ]
+                    } px-2 py-1 rounded`}
                 >
-                    <Text style={tw`text-sm`}>{statusText[loan.status]}</Text>
+                    <Text style={tw`text-sm`}>
+                        {statusText[
+                            (loan.loanState?.stateId as ELoanStateId) ??
+                                ELoanStateId.LOAN_REQUEST_SCREENING
+                        ] ?? '상태 없음'}
+                    </Text>
                 </View>
             </View>
 
             <View style={tw`space-y-1`}>
                 <Text style={tw`text-gray-600`}>
-                    신청금액: {formatAmount(loan.amount)}원
+                    신청금액:{' '}
+                    {loan.loanAmount ? formatAmount(loan.loanAmount) : '미정'}원
                 </Text>
                 <Text style={tw`text-gray-600`}>
-                    신청일자: {formatDate(loan.applicationDate)}
+                    신청일자:{' '}
+                    {loan.submissionUpdatedAt
+                        ? formatDate(loan.submissionUpdatedAt)
+                        : '미정'}
                 </Text>
-                <Text style={tw`text-gray-600`}>용도: {loan.purpose}</Text>
+                <Text style={tw`text-gray-600`}>용도: {loan.loanPurpose}</Text>
             </View>
         </Pressable>
     )
