@@ -3,7 +3,7 @@ import { useState } from 'react'
 import tw from '@/utils/tw'
 import { LoanCard } from '@/components/loans/LoanCard'
 import { SearchBar } from '@/components/ui/SearchBar'
-import { useLoanList } from '@/hooks/useLoanList'
+import { useLoanList } from '@/hooks/loans/useLoanList'
 
 export default function LoansScreen() {
     const [searchQuery, setSearchQuery] = useState('')

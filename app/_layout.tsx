@@ -1,4 +1,3 @@
-import { Ionicons } from '@expo/vector-icons'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Stack, Tabs } from 'expo-router'
 

@@ -1,7 +1,7 @@
 import { View, Text, ScrollView, ActivityIndicator } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
 import tw from '@/utils/tw'
-import { useLoanDetail } from '@/hooks/useLoanDetail'
+import { useLoanDetail } from '@/hooks/loans/useLoanDetail'
 import { formatAmount, formatDate } from '@/utils/format'
 
 export default function LoanDetailScreen() {
