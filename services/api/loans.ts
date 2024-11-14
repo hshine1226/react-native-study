@@ -1,36 +1,14 @@
-import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client'
-import { setContext } from '@apollo/client/link/context'
-import { QUERY_LOAN_REQUESTS, QUERY_LOAN_REQUEST } from './queries'
+import { QUERY_LOAN_REQUEST, QUERY_LOAN_REQUESTS } from './queries'
 import {
     QueryLoanRequestsFiltersInput,
     QueryLoanRequestsReturn
 } from '../generated/graphql'
-
-const httpLink = createHttpLink({
-    uri: 'http://localhost:8000/graphql'
-})
-
-const authLink = setContext((_, { headers }) => {
-    const token =
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NCIsImNvbXBhbnlJZCI6InZvcyIsImlzU3Vic2NyaWJlZCI6ZmFsc2UsInJlZ3VsYXJQYXltZW50RGF0ZSI6bnVsbCwic3Vic2NyaXB0aW9uVHlwZSI6Iuq4sOyXheygle2ajOybkCIsImlzUmVhbEVzdGF0ZUFnZW50IjpmYWxzZSwiaXNGaW5hbmNpYWxJbnN0aXR1dGlvblVzZXIiOmZhbHNlLCJkZXZpY2VJZCI6IjY1NTY4NmE1OTlhMyIsImlzVm9zIjp0cnVlLCJpYXQiOjE3MzE1NjExOTYsImV4cCI6MTczMTU2MjA5NiwiaXNzIjoidmFsdWVvZnNwYWNlIn0.YNeHq0asOjBryQhW77eitxGFh-JlBSi6g_jxJL5ZyTQ'
-
-    return {
-        headers: {
-            ...headers,
-            authorization: `Bearer ${token}`
-        }
-    }
-})
-
-const client = new ApolloClient({
-    link: authLink.concat(httpLink),
-    cache: new InMemoryCache()
-})
+import { apolloClient } from './apollo'
 
 export const loanAPI = {
     getLoans: async (filters: QueryLoanRequestsFiltersInput) => {
         try {
-            const { data } = await client.query<{
+            const { data } = await apolloClient.query<{
                 queryLoanRequests: QueryLoanRequestsReturn
             }>({
                 query: QUERY_LOAN_REQUESTS,
@@ -47,7 +25,7 @@ export const loanAPI = {
     },
     getLoanDetail: async (serialNumber: string) => {
         try {
-            const { data } = await client.query<{
+            const { data } = await apolloClient.query<{
                 queryLoanRequest: any
             }>({
                 query: QUERY_LOAN_REQUEST,
