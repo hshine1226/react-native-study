@@ -39,7 +39,7 @@
 ├── hooks/                      # 커스텀 훅
 │   ├── useLoanList.ts
 │   └── useLoanDetail.ts
-├── services/                   # API와 타입 정의
+├── services/                   # API와 타입 정의 (외부 서비스나 API 통신을 담당)
 │   ├── api/
 │   │   └── loans.ts
 │   └── types/
