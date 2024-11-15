@@ -1,22 +1,39 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client'
 import { setContext } from '@apollo/client/link/context'
 import { tokenStorage } from '../utils/tokenStorage'
+import { login } from '../auth/login'
 
 const httpLink = createHttpLink({
     uri: 'http://localhost:8000/graphql'
 })
 
 const authLink = setContext(async (_, { headers }) => {
-    await tokenStorage.saveToken(
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NCIsImNvbXBhbnlJZCI6InZvcyIsImlzU3Vic2NyaWJlZCI6ZmFsc2UsInJlZ3VsYXJQYXltZW50RGF0ZSI6bnVsbCwic3Vic2NyaXB0aW9uVHlwZSI6Iuq4sOyXheygle2ajOybkCIsImlzUmVhbEVzdGF0ZUFnZW50IjpmYWxzZSwiaXNGaW5hbmNpYWxJbnN0aXR1dGlvblVzZXIiOmZhbHNlLCJkZXZpY2VJZCI6IjY1NTY4NmE1OTlhMyIsImlzVm9zIjp0cnVlLCJpYXQiOjE3MzE1Njk0OTgsImV4cCI6MTczMTU3MDM5OCwiaXNzIjoidmFsdWVvZnNwYWNlIn0.9m7aLdSTZ4ZKbYWZQIDBceFhMuSpyia3V-LojNiPOLo'
-    )
-    // 저장된 토큰 가져오기
-    const token = await tokenStorage.getToken()
+    try {
+        // 저장된 토큰 가져오기
+        let token = await tokenStorage.getToken()
 
-    return {
-        headers: {
-            ...headers,
-            authorization: token ? `Bearer ${token}` : ''
+        // 토큰이 없거나 만료된 경우 로그인 시도
+        if (!token || (token && tokenStorage.isTokenExpired(token))) {
+            console.log('토큰 없음 또는 만료됨. 재로그인 시도...')
+            const loginResponse = await login('01066621488', 'rhdrksdmlrkcl!')
+            token = loginResponse.access_token
+        }
+
+        console.log('🚀 ~ authLink ~ token:', token)
+        return {
+            headers: {
+                ...headers,
+                authorization: token ? `Bearer ${token}` : ''
+            }
+        }
+    } catch (error) {
+        console.error('인증 처리 실패:', error)
+        // 토큰 관련 에러 발생 시 기존 토큰 제거
+        await tokenStorage.removeToken()
+        return {
+            headers: {
+                ...headers
+            }
         }
     }
 })

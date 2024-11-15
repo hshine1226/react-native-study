@@ -1,6 +1,12 @@
 import * as SecureStore from 'expo-secure-store'
+import { jwtDecode } from 'jwt-decode'
 
 const TOKEN_KEY = 'your_token_key'
+
+interface DecodedToken {
+    exp: number
+    [key: string]: any
+}
 
 export const tokenStorage = {
     async saveToken(token: string) {
@@ -25,6 +31,16 @@ export const tokenStorage = {
             await SecureStore.deleteItemAsync(TOKEN_KEY)
         } catch (error) {
             console.error('Token 삭제 실패:', error)
+        }
+    },
+
+    isTokenExpired(token: string): boolean {
+        try {
+            const decoded = jwtDecode<DecodedToken>(token)
+            const currentTime = Date.now() / 1000
+            return decoded.exp < currentTime
+        } catch {
+            return true
         }
     }
 }
